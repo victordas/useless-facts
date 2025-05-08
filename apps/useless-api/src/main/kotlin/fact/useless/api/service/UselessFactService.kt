@@ -76,4 +76,24 @@ class UselessFactService(
 
     return digest
   }
+
+  /**
+   * Returns all cached facts without incrementing access counts
+   * @return List of all cached facts
+   */
+  fun getAllCachedFacts(): List<CachedUselessFact> {
+    val cache = cacheManager.getCache("cached-useless-facts")
+      ?: return emptyList()
+
+    val facts = mutableListOf<CachedUselessFact>()
+    val nativeCache = cache.nativeCache
+
+    if (nativeCache is com.github.benmanes.caffeine.cache.Cache<*, *>) {
+      @Suppress("UNCHECKED_CAST")
+      val caffeineCache = nativeCache as com.github.benmanes.caffeine.cache.Cache<String, CachedUselessFact>
+      facts.addAll(caffeineCache.asMap().values)
+    }
+
+    return facts
+  }
 }

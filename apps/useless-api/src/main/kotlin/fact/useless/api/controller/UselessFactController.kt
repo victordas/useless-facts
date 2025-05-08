@@ -17,4 +17,9 @@ class FactController(private val uselessFactService: UselessFactService) {
     return uselessFactService.fetchRandomFact()
   }
 
+  @GetMapping
+  fun getAllFacts(): Flux<CachedUselessFact> {
+    return Flux.fromIterable(uselessFactService.getAllCachedFacts())
+  }
+
 }
