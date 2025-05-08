@@ -20,8 +20,15 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+  	// Caffeine cache
+  	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
+  	// Spring Boot Cache Abstraction
 	implementation("org.springframework.boot:spring-boot-starter-cache")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+
+  	implementation("org.springframework.boot:spring-boot-starter-webflux")
+  	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -31,9 +38,14 @@ dependencies {
 }
 
 kotlin {
+	jvmToolchain(17)
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict")
 	}
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.jvmTarget = "17"
 }
 
 tasks.withType<Test> {
