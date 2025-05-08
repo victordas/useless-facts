@@ -96,4 +96,32 @@ class UselessFactService(
 
     return facts
   }
+
+  /**
+   * Retrieves a cached fact by its shortened URL
+   * @return Mono that emits the found fact or error if not found
+   */
+  fun getFactByShortenedUrl(shortenedUrl: String): Mono<CachedUselessFact> {
+    val cache = cacheManager.getCache("cached-useless-facts")
+      ?: return Mono.error(RuntimeException("Cache 'cached-useless-facts' not found"))
+
+    val fact = cache.get(shortenedUrl, CachedUselessFact::class.java)
+      ?: return Mono.error(RuntimeException("Fact not found with shortened URL: $shortenedUrl"))
+
+    return Mono.just(fact)
+  }
+
+  fun getFactAndTrackAccess(shortenedUrl: String): Mono<CachedUselessFact> {
+    return getFactByShortenedUrl(shortenedUrl)
+      .flatMap { cachedFact ->
+        // Increment access count
+        val counter = accessCounters.computeIfAbsent(shortenedUrl) { AtomicInteger(0) }
+        val newCount = counter.incrementAndGet()
+
+        // Update the cached fact with new access count
+        cachedFact.accessCount = newCount
+
+        Mono.just(cachedFact)
+      }
+  }
 }

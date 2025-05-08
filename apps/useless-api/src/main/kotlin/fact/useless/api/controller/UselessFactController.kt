@@ -22,4 +22,15 @@ class FactController(private val uselessFactService: UselessFactService) {
     return Flux.fromIterable(uselessFactService.getAllCachedFacts())
   }
 
+  @GetMapping("/{shortenedUrl}")
+  fun getFactByShortenedUrl(@PathVariable shortenedUrl: String): Mono<CachedUselessFact> {
+    return uselessFactService.getFactAndTrackAccess(shortenedUrl)
+      .onErrorResume { error ->
+        when (error) {
+          is ResponseStatusException -> Mono.error(error)
+          else -> Mono.error(ResponseStatusException(HttpStatus.NOT_FOUND, "Fact not found"))
+        }
+      }
+  }
+
 }
