@@ -6,10 +6,6 @@ import fact.useless.api.model.UselessStatistics
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.CacheConfig
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -17,8 +13,6 @@ import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.containsKey
-import kotlin.text.get
 
 @Service
 @CacheConfig(cacheNames = ["cached-useless-facts"])
