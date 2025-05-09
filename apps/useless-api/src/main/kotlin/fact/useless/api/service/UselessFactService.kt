@@ -2,6 +2,7 @@ package fact.useless.api.service
 
 import fact.useless.api.model.CachedUselessFact
 import fact.useless.api.model.UselessFactAPIResponse
+import fact.useless.api.model.UselessStatistics
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.CacheConfig
@@ -16,6 +17,8 @@ import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.collections.containsKey
+import kotlin.text.get
 
 @Service
 @CacheConfig(cacheNames = ["cached-useless-facts"])
@@ -123,5 +126,51 @@ class UselessFactService(
 
         Mono.just(cachedFact)
       }
+  }
+
+  /**
+   * Provides statistics about fact access
+   * @return Statistics object with cache and access information
+   */
+  fun getUselessStatistics(): UselessStatistics {
+    val facts = getAllCachedFacts()
+    val totalFacts = facts.size
+
+    // Map access counts from our counter
+    val factsAccessCount = accessCounters.entries.associate {
+      it.key to it.value.get()
+    }
+
+    // Get top accessed facts
+    val topAccessedFacts = facts
+      .filter { accessCounters.containsKey(it.shortenedUrl) }
+      .sortedByDescending { accessCounters[it.shortenedUrl]?.get() ?: 0 }
+      .take(5)
+
+    // Get cache statistics if available
+    val cache = cacheManager.getCache("cached-useless-facts")
+    var hitRate = 0.0
+    var missRate = 0.0
+    var requestCount = 0L
+    var evictionCount = 0L
+
+    if (cache?.nativeCache is com.github.benmanes.caffeine.cache.Cache<*, *>) {
+      val caffeineCache = cache.nativeCache as com.github.benmanes.caffeine.cache.Cache<*, *>
+      val stats = caffeineCache.stats()
+      hitRate = stats.hitRate()
+      missRate = stats.missRate()
+      requestCount = stats.requestCount()
+      evictionCount = stats.evictionCount()
+    }
+
+    return UselessStatistics(
+      totalFacts = totalFacts,
+      factsAccessCount = factsAccessCount,
+      topAccessedFacts = topAccessedFacts,
+      hitRate = hitRate,
+      missRate = missRate,
+      requestCount = requestCount,
+      evictionCount = evictionCount
+    )
   }
 }
