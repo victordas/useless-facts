@@ -2,7 +2,7 @@
 
 ### Required API Endpoints
 
-##### POST `/facts`
+##### GET `/facts/random`
 _To fetch a random fact from the Useless Facts API, store it in memory and return the fact._
 
 ##### GET `/facts/{shortenedUrl}`
@@ -16,6 +16,7 @@ _Return all cached facts. Do not increment access counts._
 ##### GET `/admin/statistics`
 
 _Return analytics data (e.g., access count) for all cached facts._
+
 
 ### Frontend Screens Required
 
