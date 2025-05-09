@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping
-class FactController(private val uselessFactService: UselessFactService) {
+class UselessFactController(private val uselessFactService: UselessFactService) {
 
   @PostMapping("/facts")
   fun getRandomFact(): Mono<CachedUselessFact> {
