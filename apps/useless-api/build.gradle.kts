@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
   // Caffeine cache
-  implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
   // Spring Boot Cache Abstraction
   implementation("org.springframework.boot:spring-boot-starter-cache")
@@ -37,10 +37,15 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test"){
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
   }
+  testImplementation("org.springframework.security:spring-security-test")
   testImplementation("io.projectreactor:reactor-test")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-  testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+  testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+  // Swagger Doc
+  implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.6")
+
 }
 
 kotlin {

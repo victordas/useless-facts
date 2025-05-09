@@ -26,7 +26,7 @@ class SecurityConfig(
           .pathMatchers("/admin/**").hasRole("ADMIN")
           .anyExchange().permitAll()
       }
-      .httpBasic { httpBasic ->
+      .httpBasic { _ ->
         // Basic HTTP authentication configuration if needed
       }
       // Disable CSRF protection for REST API

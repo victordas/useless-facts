@@ -31,7 +31,7 @@ class UselessFactService(
     return webClient.get()
       .uri(apiUrl)
       .retrieve()
-      .onStatus({ status -> status.is3xxRedirection }, { response ->
+      .onStatus({ status -> status.is3xxRedirection }, { _ ->
         // Log redirection and follow (this is handled by the WebClient config,
         // but we can add additional logging or handling here if needed)
         Mono.empty()
