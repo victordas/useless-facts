@@ -95,6 +95,46 @@ class UselessFactServiceTest {
       .verifyComplete()
   }
 
+  @Test
+  fun `should return paginated cached facts with default page and size`() {
+    val fact1 = sampleFact("1")
+    val fact2 = sampleFact("2")
+    val fact3 = sampleFact("3")
+
+    cache.put("1", fact1)
+    cache.put("2", fact2)
+    cache.put("3", fact3)
+
+    val result = service.getCachedFactsPage() // default: page = 1, size = 1
+    assert(result.size == 1)
+    assert(result[0].shortenedUrl == "1")
+  }
+
+  @Test
+  fun `should return second page of cached facts`() {
+    val fact1 = sampleFact("1")
+    val fact2 = sampleFact("2")
+    val fact3 = sampleFact("3")
+
+    cache.put("1", fact1)
+    cache.put("2", fact2)
+    cache.put("3", fact3)
+
+    val result = service.getCachedFactsPage(page = 2, size = 1)
+    assert(result.size == 1)
+    assert(result[0].shortenedUrl == "2")
+  }
+
+  @Test
+  fun `should return empty list if page is out of bounds`() {
+    val fact1 = sampleFact("1")
+    cache.put("1", fact1)
+
+    val result = service.getCachedFactsPage(page = 5, size = 2)
+    assert(result.isEmpty())
+  }
+
+
   private fun sampleFact(id: String) = CachedUselessFact(
     id = id,
     text = "Text",

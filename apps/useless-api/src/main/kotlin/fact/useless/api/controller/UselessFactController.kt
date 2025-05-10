@@ -19,8 +19,11 @@ class UselessFactController(private val uselessFactService: UselessFactService) 
   }
 
   @GetMapping("/facts")
-  fun getAllFacts(): Flux<CachedUselessFact> {
-    return Flux.fromIterable(uselessFactService.getAllCachedFacts())
+  fun getAllFacts(
+    @RequestParam(defaultValue = "1") page: Int,
+    @RequestParam(defaultValue = "1") size: Int
+  ): Mono<List<CachedUselessFact>> {
+    return Mono.fromCallable { uselessFactService.getCachedFactsPage(page, size) }
   }
 
   @GetMapping("/facts/{shortenedUrl}")

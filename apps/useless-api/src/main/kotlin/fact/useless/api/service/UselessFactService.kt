@@ -63,6 +63,30 @@ class UselessFactService(
   }
 
   /**
+   * Returns cached facts without incrementing access counts with Page size
+   * @return List of cached facts
+   */
+  fun getCachedFactsPage(page: Int = 1, size: Int = 1): List<CachedUselessFact> {
+    require(page >= 1) { "Page index must be at least 1" }
+    require(size > 0) { "Page size must be greater than zero" }
+
+    val cache = cacheManager.getCache("cached-useless-facts") ?: return emptyList()
+    val nativeCache = cache.nativeCache
+    if (nativeCache !is com.github.benmanes.caffeine.cache.Cache<*, *>) return emptyList()
+
+    @Suppress("UNCHECKED_CAST")
+    val caffeineCache = nativeCache as com.github.benmanes.caffeine.cache.Cache<String, CachedUselessFact>
+    val allFacts = caffeineCache.asMap().values.toList()
+
+    val fromIndex = (page - 1) * size
+    if (fromIndex >= allFacts.size) return emptyList()
+
+    val toIndex = (fromIndex + size).coerceAtMost(allFacts.size)
+    return allFacts.subList(fromIndex, toIndex)
+  }
+
+
+  /**
    * Generates a shortened URL from the fact ID
    */
   private fun generateShortenedUrl(id: String): String {
@@ -78,7 +102,11 @@ class UselessFactService(
    * Returns all cached facts without incrementing access counts
    * @return List of all cached facts
    */
-  fun getAllCachedFacts(): List<CachedUselessFact> {
+  fun getAllCachedFacts(page: Int = 1, size: Int = 1): List<CachedUselessFact> {
+
+    require(page >= 1) { "Page index must be at least 1" }
+    require(size > 0) { "Page size must be greater than zero" }
+
     val cache = cacheManager.getCache("cached-useless-facts")
       ?: return emptyList()
 
