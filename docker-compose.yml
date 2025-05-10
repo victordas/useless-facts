@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  useless-api:
+    build:
+      context: ./apps/useless-api
+      dockerfile: Dockerfile
+    container_name: useless-api
+    ports:
+      - "4400:4400"
+    environment:
+      # External API URL
+      USELESSFACTS_API_URL: https://uselessfacts.jsph.pl/random.json?language=en
+
+      # Logging
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_COM_USELESSFACTS_API: DEBUG
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: INFO
+
+      # Spring App Name
+      SPRING_APPLICATION_NAME: useless-api
+
+      # CORS Settings
+      SPRING_MVC_CORS_ALLOWED_ORIGINS: http://localhost:4200
+      SPRING_MVC_CORS_ALLOWED_METHODS: GET,POST,PUT,DELETE,OPTIONS
+      SPRING_MVC_CORS_ALLOWED_HEADERS: "*"
+
+      # Cache Settings
+      CACHE_EXPIRY_DURATION: 86400
+      CACHE_EXPIRY_UNIT: SECONDS
+      CACHE_MAX_SIZE: 1000
+
+      # Admin credentials (consider using secrets in production)
+      APP_USER: admin
+      APP_PASSWORD: admin
+
+      # OpenAPI/Swagger
+      SPRINGDOC_API_DOCS_PATH: /v3/api-docs
+      SWAGGER_UI_PATH: /swagger-ui.html
