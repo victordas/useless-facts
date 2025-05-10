@@ -2,7 +2,9 @@
   "name": "@useless-facts/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "deploy": "pnpm nx build useless-api && docker-compose up --build"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "~19.2.0",
