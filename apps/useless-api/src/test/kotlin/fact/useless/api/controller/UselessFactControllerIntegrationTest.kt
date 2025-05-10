@@ -1,6 +1,7 @@
 package fact.useless.api.controller
 
 import fact.useless.api.model.CachedUselessFact
+import fact.useless.api.model.PaginatedResponse
 import fact.useless.api.model.UselessStatistics
 import fact.useless.api.service.UselessFactService
 import org.junit.jupiter.api.Test
@@ -48,8 +49,15 @@ class UselessFactControllerIntegrationTest {
   @Test
   fun `should fetch facts page`() {
     // Arrange
-    val facts = listOf(createSampleFact(), createSampleFact(id = "2"))
-    whenever(uselessFactService.getCachedFactsPage(1, 2)).thenReturn(facts)
+    val fact1 = createSampleFact()
+    val fact2 = createSampleFact(id = "2")
+    val facts = listOf(fact1, fact2)
+    val paginatedResponse = PaginatedResponse(
+      items = facts,
+      totalCount = 2L,
+      totalPages = 1
+    )
+    whenever(uselessFactService.getCachedFactsPage(1, 2)).thenReturn(paginatedResponse)
 
     // Act & Assert
     webTestClient.get()
@@ -57,15 +65,26 @@ class UselessFactControllerIntegrationTest {
       .accept(MediaType.APPLICATION_JSON)
       .exchange()
       .expectStatus().isOk
-      .expectBodyList(CachedUselessFact::class.java)
-      .hasSize(2)
+      .expectBody(PaginatedResponse::class.java) // Expect the PaginatedResponse class
+      .value { response ->
+        // Assert the paginated response contains the expected facts
+        assert(response.items.size == 2) // Expect 2 facts in the paginated response
+        assert(response.items[0].shortenedUrl == fact1.shortenedUrl) // Verify the first fact
+        assert(response.items[1].shortenedUrl == fact2.shortenedUrl) // Verify the second fact
+      }
   }
 
   @Test
   fun `should use default pagination values when not specified`() {
     // Arrange
-    val facts = listOf(createSampleFact())
-    whenever(uselessFactService.getCachedFactsPage(1, 1)).thenReturn(facts)
+    val fact1 = createSampleFact()
+    val facts = listOf(fact1)
+    val paginatedResponse = PaginatedResponse(
+      items = facts,
+      totalCount = 1L,
+      totalPages = 1
+    )
+    whenever(uselessFactService.getCachedFactsPage(1, 1)).thenReturn(paginatedResponse)
 
     // Act & Assert
     webTestClient.get()
@@ -73,8 +92,11 @@ class UselessFactControllerIntegrationTest {
       .accept(MediaType.APPLICATION_JSON)
       .exchange()
       .expectStatus().isOk
-      .expectBodyList(CachedUselessFact::class.java)
-      .hasSize(1)
+      .expectBody(PaginatedResponse::class.java)
+      .value { response ->
+        assert(response.items.size == 1) // Expect 2 facts in the paginated response
+        assert(response.items[0].shortenedUrl == fact1.shortenedUrl) // Verify the first fact
+      }
   }
 
   @Test

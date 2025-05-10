@@ -1,6 +1,7 @@
 package fact.useless.api.service
 
 import fact.useless.api.model.CachedUselessFact
+import fact.useless.api.model.PaginatedResponse
 import fact.useless.api.model.UselessFactAPIResponse
 import fact.useless.api.model.UselessStatistics
 import org.springframework.beans.factory.annotation.Value
@@ -66,23 +67,19 @@ class UselessFactService(
    * Returns cached facts without incrementing access counts with Page size
    * @return List of cached facts
    */
-  fun getCachedFactsPage(page: Int = 1, size: Int = 1): List<CachedUselessFact> {
-    require(page >= 1) { "Page index must be at least 1" }
-    require(size > 0) { "Page size must be greater than zero" }
+  fun getCachedFactsPage(page: Int?, size: Int?): PaginatedResponse {
+    val currentPage = page ?: 1
+    val pageSize = size ?: 1
 
-    val cache = cacheManager.getCache("cached-useless-facts") ?: return emptyList()
-    val nativeCache = cache.nativeCache
-    if (nativeCache !is com.github.benmanes.caffeine.cache.Cache<*, *>) return emptyList()
+    val fromIndex = (currentPage - 1) * pageSize
+    val toIndex = fromIndex + pageSize
 
-    @Suppress("UNCHECKED_CAST")
-    val caffeineCache = nativeCache as com.github.benmanes.caffeine.cache.Cache<String, CachedUselessFact>
-    val allFacts = caffeineCache.asMap().values.toList()
+    val allFacts = getAllCachedFacts()
+    val paginatedFacts = allFacts.slice(fromIndex until minOf(toIndex, allFacts.size))
+    val totalCount = allFacts.size.toLong()
+    val totalPages = (totalCount / pageSize).toInt() + if (totalCount % pageSize > 0) 1 else 0
 
-    val fromIndex = (page - 1) * size
-    if (fromIndex >= allFacts.size) return emptyList()
-
-    val toIndex = (fromIndex + size).coerceAtMost(allFacts.size)
-    return allFacts.subList(fromIndex, toIndex)
+    return PaginatedResponse(paginatedFacts, totalCount, totalPages)
   }
 
 
@@ -102,10 +99,7 @@ class UselessFactService(
    * Returns all cached facts without incrementing access counts
    * @return List of all cached facts
    */
-  fun getAllCachedFacts(page: Int = 1, size: Int = 1): List<CachedUselessFact> {
-
-    require(page >= 1) { "Page index must be at least 1" }
-    require(size > 0) { "Page size must be greater than zero" }
+  fun getAllCachedFacts(): List<CachedUselessFact> {
 
     val cache = cacheManager.getCache("cached-useless-facts")
       ?: return emptyList()

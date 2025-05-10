@@ -1,6 +1,7 @@
 package fact.useless.api.controller
 
 import fact.useless.api.model.CachedUselessFact
+import fact.useless.api.model.PaginatedResponse
 import fact.useless.api.model.UselessStatistics
 import fact.useless.api.service.UselessFactService
 import org.junit.jupiter.api.Test
@@ -40,11 +41,16 @@ class UselessFactControllerTest {
   fun `should fetch facts per page`() {
     // Arrange
     val facts = listOf(createSampleFact(), createSampleFact(id = "2"))
-    whenever(uselessFactService.getCachedFactsPage(1, 2)).thenReturn(facts)
+    val paginatedResponse = PaginatedResponse(
+      items = facts,
+      totalCount = 2L,
+      totalPages = 1
+    )
+    whenever(uselessFactService.getCachedFactsPage(1, 2)).thenReturn(paginatedResponse)
 
     // Act & Assert
     StepVerifier.create(controller.getAllFacts(page = 1, size = 2))
-      .expectNext(facts)
+      .expectNext(paginatedResponse)
       .verifyComplete()
   }
 

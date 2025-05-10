@@ -1,6 +1,7 @@
 package fact.useless.api.controller
 
 import fact.useless.api.model.CachedUselessFact
+import fact.useless.api.model.PaginatedResponse
 import fact.useless.api.model.UselessStatistics
 import fact.useless.api.service.UselessFactService
 import org.springframework.http.HttpStatus
@@ -22,7 +23,7 @@ class UselessFactController(private val uselessFactService: UselessFactService) 
   fun getAllFacts(
     @RequestParam(defaultValue = "1") page: Int,
     @RequestParam(defaultValue = "1") size: Int
-  ): Mono<List<CachedUselessFact>> {
+  ): Mono<PaginatedResponse> {
     return Mono.fromCallable { uselessFactService.getCachedFactsPage(page, size) }
   }
 

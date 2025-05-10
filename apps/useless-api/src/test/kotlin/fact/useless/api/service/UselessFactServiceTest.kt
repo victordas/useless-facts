@@ -3,6 +3,7 @@ package fact.useless.api.service
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import fact.useless.api.model.CachedUselessFact
+import fact.useless.api.model.PaginatedResponse
 import fact.useless.api.model.UselessFactAPIResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -105,9 +106,9 @@ class UselessFactServiceTest {
     cache.put("2", fact2)
     cache.put("3", fact3)
 
-    val result = service.getCachedFactsPage() // default: page = 1, size = 1
-    assert(result.size == 1)
-    assert(result[0].shortenedUrl == "1")
+    val result = service.getCachedFactsPage(null, null) // default: page = 1, size = 1
+    assert(result.items.size == 1)
+    assert(result.items[0].shortenedUrl == "1")
   }
 
   @Test
@@ -120,9 +121,9 @@ class UselessFactServiceTest {
     cache.put("2", fact2)
     cache.put("3", fact3)
 
-    val result = service.getCachedFactsPage(page = 2, size = 1)
-    assert(result.size == 1)
-    assert(result[0].shortenedUrl == "2")
+    val result = service.getCachedFactsPage(2,1)
+    assert(result.items.size == 1)
+    assert(result.items[0].shortenedUrl == "2")
   }
 
   @Test
@@ -131,7 +132,7 @@ class UselessFactServiceTest {
     cache.put("1", fact1)
 
     val result = service.getCachedFactsPage(page = 5, size = 2)
-    assert(result.isEmpty())
+    assert(result.items.isEmpty())
   }
 
 
