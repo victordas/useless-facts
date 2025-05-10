@@ -1,0 +1,14 @@
+{
+  "/facts": {
+    "target": "http://localhost:4400",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/admin": {
+    "target": "http://localhost:4400",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

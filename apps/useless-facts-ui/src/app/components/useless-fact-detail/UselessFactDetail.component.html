@@ -1,1 +1,29 @@
-<p>UselessFactDetail works!</p>
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+  <h2 class="text-xl font-semibold text-gray-800 mb-4">Did You Know?</h2>
+  
+  <!-- Display error message if there's an error -->
+  <div *ngIf="hasError" class="text-red-500 mb-4">
+    <p class="font-bold">Error:</p>
+    <p>{{ error?.message }}</p>
+    <p>Status Code: {{ error?.status }}</p>
+  </div>
+
+  <!-- Display fact if there's no error -->
+  <div *ngIf="!hasError">
+    <p class="text-gray-600 mb-4">{{ fact?.text }}</p>
+
+    <div class="text-sm text-gray-500 mb-2">
+      <span class="font-bold">Source:</span> 
+      <a class="text-blue-500 hover:underline" [href]="fact?.sourceUrl" target="_blank">{{ fact?.source }}</a>
+    </div>
+
+    <div class="text-sm text-gray-500">
+      <span class="font-bold">Language:</span> {{ fact?.language }}
+    </div>
+
+    <div class="mt-4 flex justify-between items-center">
+      <a class="text-blue-500 hover:underline text-sm" [href]="fact?.permalink" target="_blank">Read More</a>
+      <span class="text-sm text-gray-400">{{ fact?.createdAt | date: 'medium' }}</span>
+    </div>
+  </div>
+</div>
