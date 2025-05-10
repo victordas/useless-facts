@@ -3,3 +3,5 @@ packages:
 ignoredBuiltDependencies:
   - '@swc/core'
   - nx
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
