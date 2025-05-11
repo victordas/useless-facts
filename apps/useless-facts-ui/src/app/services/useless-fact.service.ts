@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UselessFact } from '../models';
+import { PaginatedResponse, UselessFact, UselessStatistics } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class UselessFactService {
@@ -17,11 +17,30 @@ export class UselessFactService {
     return this.http.get<UselessFact>(`${this.api}/facts/${shortUrl}`);
   }
 
-  getAllFacts(): Observable<UselessFact[]> {
-    return this.http.get<UselessFact[]>(`${this.api}/facts`);
+  getAllFacts(page?: number, size?: number): Observable<PaginatedResponse> {
+    return this.http.get<PaginatedResponse>(`${this.api}/facts`, {
+      params: {
+        page: page ? page.toString() : '',
+        size: size ? size.toString() : '',
+      },
+    });
   }
 
-  getStatistics(): Observable<UselessFact[]> {
-    return this.http.get<UselessFact[]>(`/admin/statistics`);
+  getStatistics(
+    username: string,
+    password: string
+  ): Observable<UselessStatistics> {
+    const encoded = this.encodeBasicAuth(username, password);
+    const headers = new HttpHeaders({
+      Authorization: `Basic ${encoded}`,
+    });
+    return this.http.get<UselessStatistics>(`/admin/statistics`, { headers });
+  }
+
+  private encodeBasicAuth(username: string, password: string): string {
+    const str = `${username}:${password}`;
+    const utf8Bytes = new TextEncoder().encode(str);
+    const base64 = window.btoa(String.fromCharCode(...utf8Bytes));
+    return base64;
   }
 }
