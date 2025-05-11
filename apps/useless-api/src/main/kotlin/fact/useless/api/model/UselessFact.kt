@@ -28,3 +28,9 @@ data class CachedUselessFact(
   val createdAt: LocalDateTime = LocalDateTime.now(),
   var accessCount: Int = 0
 )
+
+data class PaginatedResponse (
+  val items: List<CachedUselessFact>,
+  val totalCount: Long,
+  val totalPages: Int
+)

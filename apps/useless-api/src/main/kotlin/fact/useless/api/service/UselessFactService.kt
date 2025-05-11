@@ -1,6 +1,7 @@
 package fact.useless.api.service
 
 import fact.useless.api.model.CachedUselessFact
+import fact.useless.api.model.PaginatedResponse
 import fact.useless.api.model.UselessFactAPIResponse
 import fact.useless.api.model.UselessStatistics
 import org.springframework.beans.factory.annotation.Value
@@ -63,6 +64,26 @@ class UselessFactService(
   }
 
   /**
+   * Returns cached facts without incrementing access counts with Page size
+   * @return List of cached facts
+   */
+  fun getCachedFactsPage(page: Int?, size: Int?): PaginatedResponse {
+    val currentPage = page ?: 1
+    val pageSize = size ?: 1
+
+    val fromIndex = (currentPage - 1) * pageSize
+    val toIndex = fromIndex + pageSize
+
+    val allFacts = getAllCachedFacts()
+    val paginatedFacts = allFacts.slice(fromIndex until minOf(toIndex, allFacts.size))
+    val totalCount = allFacts.size.toLong()
+    val totalPages = (totalCount / pageSize).toInt() + if (totalCount % pageSize > 0) 1 else 0
+
+    return PaginatedResponse(paginatedFacts, totalCount, totalPages)
+  }
+
+
+  /**
    * Generates a shortened URL from the fact ID
    */
   private fun generateShortenedUrl(id: String): String {
@@ -79,6 +100,7 @@ class UselessFactService(
    * @return List of all cached facts
    */
   fun getAllCachedFacts(): List<CachedUselessFact> {
+
     val cache = cacheManager.getCache("cached-useless-facts")
       ?: return emptyList()
 
