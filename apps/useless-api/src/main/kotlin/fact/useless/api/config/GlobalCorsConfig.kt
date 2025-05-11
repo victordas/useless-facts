@@ -16,6 +16,8 @@ class GlobalCorsConfig {
       addAllowedOrigin("http://localhost:4200") // Allow localhost:4200
       addAllowedHeader("*") // Allow any header
       addAllowedMethod("*") // Allow any HTTP method (GET, POST, etc.)
+      allowCredentials = true
+      exposedHeaders = listOf("Set-Cookie")
     }
 
     val source: CorsConfigurationSource = UrlBasedCorsConfigurationSource().apply {
