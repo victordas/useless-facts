@@ -10,8 +10,9 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 @Configuration
 class GlobalCorsConfig {
 
+  // Create a CorsConfigurationSource bean that can be used by both the CorsWebFilter and SecurityWebFilterChain
   @Bean
-  fun corsWebFilter(): CorsWebFilter {
+  fun corsConfigurationSource(): CorsConfigurationSource {
     val corsConfiguration = CorsConfiguration().apply {
       addAllowedOrigin("http://localhost:4200") // Allow localhost:4200
       addAllowedHeader("*") // Allow any header
@@ -20,11 +21,17 @@ class GlobalCorsConfig {
       exposedHeaders = listOf("Set-Cookie")
     }
 
-    val source: CorsConfigurationSource = UrlBasedCorsConfigurationSource().apply {
+    val source = UrlBasedCorsConfigurationSource().apply {
       registerCorsConfiguration("/**", corsConfiguration) // Apply CORS configuration to all endpoints
     }
 
-    return CorsWebFilter(source)
+    return source
+  }
+
+  // Create the CorsWebFilter using the same configuration source
+  @Bean
+  fun corsWebFilter(corsConfigurationSource: CorsConfigurationSource): CorsWebFilter {
+    return CorsWebFilter(corsConfigurationSource)
   }
 }
 

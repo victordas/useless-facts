@@ -37,7 +37,7 @@ export class UselessFactService {
         Authorization: `Basic ${encoded}`,
       });
     }
-    return this.http.get<UselessStatistics>(`/admin/statistics`, {  headers , withCredentials: true });
+    return this.http.get<UselessStatistics>(`${this.api}/admin/statistics`, {  headers , withCredentials: true });
   }
 
   private encodeBasicAuth(username: string, password: string): string {

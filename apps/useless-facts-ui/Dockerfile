@@ -23,9 +23,12 @@ RUN pnpm nx build useless-facts-ui
 FROM nginx:alpine
 
 # Copy the built Angular app from the build container to Nginx
-COPY --from=build /app/dist/apps/useless-facts-ui /usr/share/nginx/html
+COPY --from=build /app/dist/apps/useless-facts-ui/browser /usr/share/nginx/html
 
-# Expose port 80 for Nginx
+# Copy custom nginx config
+COPY devops/nginix/conf/app.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 4200 for Nginx
 EXPOSE 4200
 
 # Start Nginx to serve the app
