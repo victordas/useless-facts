@@ -30,11 +30,14 @@ export class UselessFactService {
     username: string,
     password: string
   ): Observable<UselessStatistics> {
-    const encoded = this.encodeBasicAuth(username, password);
-    const headers = new HttpHeaders({
-      Authorization: `Basic ${encoded}`,
-    });
-    return this.http.get<UselessStatistics>(`/admin/statistics`, { headers });
+    let headers = new HttpHeaders();
+    if(username && password) {
+      const encoded = this.encodeBasicAuth(username, password);
+      headers = new HttpHeaders({
+        Authorization: `Basic ${encoded}`,
+      });
+    }
+    return this.http.get<UselessStatistics>(`/admin/statistics`, {  headers , withCredentials: true });
   }
 
   private encodeBasicAuth(username: string, password: string): string {

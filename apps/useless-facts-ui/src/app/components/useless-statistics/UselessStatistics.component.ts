@@ -26,6 +26,7 @@ export class UselessStatisticsComponent implements OnInit {
   requireLogin = false;
   username = '';
   password = '';
+  isLoggedIn: boolean = false;
 
   constructor(
     private uselessFactService: UselessFactService,
@@ -33,7 +34,13 @@ export class UselessStatisticsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.requireLogin = true;
+    this.isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+    if(!this.isLoggedIn) {
+      this.requireLogin = true;
+    } else {
+      this.loadStatistics()
+    }
+    
   }
 
   loadStatistics() {
@@ -44,12 +51,14 @@ export class UselessStatisticsComponent implements OnInit {
           this.stats = data;
           this.shortenedUrls = Object.keys(data.factsAccessCount || {});
           this.requireLogin = false;
+          sessionStorage.setItem('isLoggedIn', 'true');
         },
         error: (err) => {
           this.error = {
             message: err.error?.message || 'An unexpected error occurred.',
             status: err.status || 500,
           };
+          sessionStorage.removeItem('isLoggedIn');
           this.closeLogin();
         },
       });
