@@ -1,5 +1,6 @@
 package fact.useless.api.controller
 
+import fact.useless.api.config.jwt.JwtUtil
 import fact.useless.api.model.CachedUselessFact
 import fact.useless.api.model.PaginatedResponse
 import fact.useless.api.model.UselessStatistics
@@ -26,6 +27,9 @@ class UselessFactControllerIntegrationTest {
 
   @MockitoBean
   private lateinit var uselessFactService: UselessFactService
+
+  @MockitoBean
+  private lateinit var jwtUtil: JwtUtil
 
   @Autowired
   private lateinit var webTestClient: WebTestClient

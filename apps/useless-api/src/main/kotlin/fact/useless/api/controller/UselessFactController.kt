@@ -21,9 +21,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping
 class UselessFactController(
-  private val uselessFactService: UselessFactService,
-  private val authenticationManager: ReactiveAuthenticationManager,
-  private val jwtUtil: JwtUtil
+  private val uselessFactService: UselessFactService
 ) {
 
   companion object {

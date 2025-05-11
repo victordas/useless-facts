@@ -9,8 +9,15 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.http.HttpStatus
+import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
+import org.springframework.security.core.context.SecurityContext
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -96,8 +103,21 @@ class UselessFactControllerTest {
   }
 
   @Test
-  fun `should fetch statistics`() {
-    // Arrange
+  fun `getStatistics returns statistics for authenticated user`() {
+    // Given
+    val username = "testUser"
+    val roles = listOf("ADMIN", "USER")
+    val authorities = roles.map { SimpleGrantedAuthority("ROLE_$it") }
+
+    val authentication: Authentication = mock {
+      whenever(it.name).thenReturn(username)
+      whenever(it.authorities).thenReturn(authorities)
+    }
+
+    val securityContext: SecurityContext = mock {
+      whenever(it.authentication).thenReturn(authentication)
+    }
+
     val stats = UselessStatistics(
       totalFacts = 10,
       factsAccessCount = mapOf("fact1" to 20, "fact2" to 10),
@@ -109,10 +129,25 @@ class UselessFactControllerTest {
     )
     whenever(uselessFactService.getUselessStatistics()).thenReturn(stats)
 
-    // Act & Assert
-    StepVerifier.create(controller.getStatistics())
+    // When
+    val result = controller.getStatistics(mock())
+      .contextWrite(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)))
+
+    // Then
+    StepVerifier.create(result)
       .expectNext(stats)
       .verifyComplete()
+  }
+
+  @Test
+  fun `getStatistics throws BadCredentialsException when not authenticated`() {
+    // When
+    val result = controller.getStatistics(mock())
+
+    // Then
+    StepVerifier.create(result)
+      .expectError(BadCredentialsException::class.java)
+      .verify()
   }
 
   private fun createSampleFact(id: String = "1") = CachedUselessFact(
