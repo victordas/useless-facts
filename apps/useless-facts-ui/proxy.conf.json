@@ -3,12 +3,14 @@
     "target": "http://localhost:4400",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "withCredentials": true
   },
   "/admin": {
     "target": "http://localhost:4400",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "withCredentials": true
   }
 }

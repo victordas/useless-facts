@@ -2,6 +2,7 @@ package fact.useless.api.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
@@ -56,6 +57,21 @@ class GlobalExceptionHandler {
     exchange: ServerWebExchange
   ): Mono<ResponseEntity<ErrorResponse>> {
     val status = HttpStatus.BAD_REQUEST
+    val response = ErrorResponse(
+      status = status.value(),
+      error = status.name,
+      message = ex.message ?: "Unexpected error",
+      path = exchange.request.path.toString()
+    )
+    return Mono.just(ResponseEntity.status(status).body(response))
+  }
+
+  @ExceptionHandler(BadCredentialsException::class)
+  fun handleGenericException(
+    ex: BadCredentialsException,
+    exchange: ServerWebExchange
+  ): Mono<ResponseEntity<ErrorResponse>> {
+    val status = HttpStatus.UNAUTHORIZED
     val response = ErrorResponse(
       status = status.value(),
       error = status.name,

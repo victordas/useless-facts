@@ -28,12 +28,18 @@ dependencies {
   // Spring Security
   implementation("org.springframework.boot:spring-boot-starter-security")
 
+  implementation("org.springframework.boot:spring-boot-starter-logging")
+
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-validation:3.4.5")
+
+  implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+  runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+  runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.boot:spring-boot-starter-test"){

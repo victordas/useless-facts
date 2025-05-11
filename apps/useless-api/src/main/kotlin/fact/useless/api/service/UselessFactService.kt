@@ -4,9 +4,13 @@ import fact.useless.api.model.CachedUselessFact
 import fact.useless.api.model.PaginatedResponse
 import fact.useless.api.model.UselessFactAPIResponse
 import fact.useless.api.model.UselessStatistics
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.CacheConfig
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono

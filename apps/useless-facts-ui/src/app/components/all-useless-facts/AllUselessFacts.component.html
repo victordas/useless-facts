@@ -22,7 +22,10 @@
   </div>
 
   <!-- Pagination Controls -->
-  <div class="flex justify-center items-center mt-8 space-x-4">
+  <div
+    *ngIf="totalPages > 0; else noFacts"
+    class="flex justify-center items-center mt-8 space-x-4"
+  >
     <button
       class="px-4 py-2 rounded-lg border bg-gray-200 hover:bg-gray-300"
       [disabled]="currentPage === 1"
@@ -41,6 +44,11 @@
       Next
     </button>
   </div>
+  <ng-template #noFacts>
+    <div class="flex justify-center items-center mt-8 space-x-4">
+      <span class="text-sm">There are no facts</span>
+    </div>
+  </ng-template>
 
   <!-- Modal -->
   <div
