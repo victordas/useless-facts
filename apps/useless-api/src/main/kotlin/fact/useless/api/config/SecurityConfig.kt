@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher
+import org.springframework.web.cors.reactive.CorsConfigurationSource
 import reactor.core.publisher.Mono
 import java.nio.charset.StandardCharsets
 import java.util.Base64
@@ -40,8 +41,10 @@ class SecurityConfig(
   fun securityWebFilterChain(
     http: ServerHttpSecurity,
     jwtAuthenticationFilter: JwtAuthenticationFilter,
-    basicAuthenticationFilter: AuthenticationWebFilter): SecurityWebFilterChain {
+    basicAuthenticationFilter: AuthenticationWebFilter,
+    corsConfigurationSource: CorsConfigurationSource): SecurityWebFilterChain {
     return http
+      .cors { cors -> cors.configurationSource(corsConfigurationSource) }
       .authorizeExchange { exchanges ->
         exchanges
           .pathMatchers("/admin/**").hasRole("ADMIN")
