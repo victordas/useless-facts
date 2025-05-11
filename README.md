@@ -1,5 +1,31 @@
 # UselessFacts
 
+---
+## How to run
+
+#### 1. Recommended: 
+ - Simply run `docker compose up --build`
+ - Both Angular Frontend and Spring Boot Kotlin App will be up and running
+
+ #### 2. Alternatively:
+ - Install NodeJS from [NodeJs](https://nodejs.org/) 
+ - Install `pnpm` via `npm install -g pnpm`
+ - Inside the project root directory run `pnpm install`
+ - Serve Angular app with `pnpm nx serve useless-facts-ui`
+ - Serve Kotlin Backend with `pnpm nx serve useless-api`
+
+ #### 3. Application Endpoints:
+ - Frontend URL: [http://localhost:4200](http://localhost:4200)
+ - Backend URL: [http://localhost:4400](http://localhost:4400)
+ - Swagger-Doc: [http://localhost:4400/swagger-ui.html](http://localhost:4400/swagger-ui.html)
+ - Actuator: [http://localhost:5500/actuator](http://localhost:5500/actuator)
+ - Health: [http://localhost:5500/actuator/health](http://localhost:5500/actuator/health)
+
+
+---
+## Initial Requirement
+---
+
 ### Required API Endpoints
 
 ##### GET `/facts/random`
@@ -38,3 +64,4 @@ _Return analytics data (e.g., access count) for all cached facts._
 ##### Analytics Screen
 
 - Display analytics, showing each fact and its access count.
+
