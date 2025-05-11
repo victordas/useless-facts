@@ -37,3 +37,12 @@ services:
       # OpenAPI/Swagger
       SPRINGDOC_API_DOCS_PATH: /v3/api-docs
       SWAGGER_UI_PATH: /swagger-ui.html
+
+  useless-facts-ui:
+    build:
+      context: .    # Set the context to the root of your Nx workspace
+      dockerfile: apps/useless-facts-ui/Dockerfile  # Specify the path to your Dockerfile
+    ports:
+      - "4200:4200"     # Expose port 80 from the container to the host
+    environment:
+      - NODE_ENV=production
