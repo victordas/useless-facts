@@ -20,6 +20,7 @@
  - Swagger-Doc: [http://localhost:4400/swagger-ui.html](http://localhost:4400/swagger-ui.html)
  - Actuator: [http://localhost:5500/actuator](http://localhost:5500/actuator)
  - Health: [http://localhost:5500/actuator/health](http://localhost:5500/actuator/health)
+ - Username and Password for Statistics is `admin` and `admin` and can be reconfigured in `docker-compose.yml` and `application.properties`
 
 
 ---
